@@ -1,0 +1,29 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///booking.db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), unique=True, nullable=False)
+
+class Flight(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    flight_number = db.Column(db.String(10), unique=True, nullable=False)
+    departure = db.Column(db.String(50), nullable=False)
+    arrival = db.Column(db.String(50), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    flight_id = db.Column(db.Integer, db.ForeignKey('flight.id'), nullable=False)
+    status = db.Column(db.String(10), nullable=False)
+
+# Initialize the database
+with app.app_context():
+    db.create_all()
+
